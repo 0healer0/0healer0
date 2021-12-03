@@ -1,0 +1,10 @@
+/* inside style.css */
+.highlight {
+    background-color: rgb(81, 211, 81);
+  }
+  
+  .error {
+    background-color: lightcoral;
+    border: red;
+  }
+  
