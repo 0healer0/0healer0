@@ -53,15 +53,6 @@ class Hero extends GameObject {
 		this.life = 3;
 		this.points = 0;
 	}
-	decrementLife() {
-		this.life--;
-		if (this.life === 0) {
-		  this.dead = true;
-		}
-	  }
-	  incrementPoints() {
-		this.points += 100;
-	  }
 	fire() {
 		gameObjects.push(new Laser(this.x + 45, this.y - 10));
 		this.cooldown = 500;
@@ -78,6 +69,15 @@ class Hero extends GameObject {
 	canFire() {
 		return this.cooldown === 0;
 	}
+	decrementLife() {
+		this.life--;
+		if (this.life === 0) {
+		  this.dead = true;
+		}
+	  }
+	  incrementPoints() {
+		this.points += 100;
+	  }
 }
 
 class Enemy extends GameObject {
@@ -134,6 +134,7 @@ const Messages = {
 	KEY_EVENT_RIGHT: 'KEY_EVENT_RIGHT',
 	KEY_EVENT_SPACE: 'KEY_EVENT_SPACE',
 	COLLISION_ENEMY_LASER: 'COLLISION_ENEMY_LASER',
+	COLLISION_ENEMY_HERO: 'COLLISION_ENEMY_HERO',
 };
 
 let heroImg,
@@ -177,16 +178,6 @@ window.addEventListener('keyup', (evt) => {
 	} else if (evt.keyCode === 32) {
 		eventEmitter.emit(Messages.KEY_EVENT_SPACE);
 	}
-	eventEmitter.on(Messages.COLLISION_ENEMY_LASER, (_, { first, second }) => {
-		first.dead = true;
-		second.dead = true;
-		hero.incrementPoints();
-	 })
-	 
-	 eventEmitter.on(Messages.COLLISION_ENEMY_HERO, (_, { enemy }) => {
-		enemy.dead = true;
-		hero.decrementLife();
-	 });
 });
 
 function createEnemies() {
@@ -288,11 +279,16 @@ function initGame() {
 		}
 		// console.log('cant fire - cooling down')
 	});
-
 	eventEmitter.on(Messages.COLLISION_ENEMY_LASER, (_, { first, second }) => {
 		first.dead = true;
 		second.dead = true;
-	});
+		hero.incrementPoints();
+	 })
+	 
+	 eventEmitter.on(Messages.COLLISION_ENEMY_HERO, (_, { enemy }) => {
+		enemy.dead = true;
+		hero.decrementLife();
+	 });
 }
 
 window.onload = async () => {
